@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Capa.Datos\Capa.Datos.csproj" />
+    <ProjectReference Include="..\Capa.Entidades\Capa.Entidades.csproj" />
+  </ItemGroup>
+
+</Project>
