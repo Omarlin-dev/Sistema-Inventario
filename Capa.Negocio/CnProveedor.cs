@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Capa.Datos;
 using Capa.Entidades;
-using Capa.Datos;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Capa.Negocio
 {
@@ -24,34 +21,41 @@ namespace Capa.Negocio
             return await objProveedor.GetProveedores();
         }
 
-        public async Task<int> AgregarProveedor(Provedor provedor)
+        public int AgregarProveedor(Provedor provedor, out string mensaje)
         {
+            mensaje = string.Empty;
             if (provedor.Nombre != null && provedor.Tipo != null)
-                return await objProveedor.AgregarProveedor(provedor);
+                return objProveedor.AgregarProveedor(provedor, out mensaje);
 
             return 0;
         }
 
-        public async Task<bool> EditarProveedor(Provedor provedor)
+        public bool EditarProveedor(Provedor provedor, out string mensaje)
         {
-            var ProveedorComprobar = await objProveedor.GetProveedor(provedor.Idprovedor);
+            var ProveedorComprobar = objProveedor.GetProveedor(provedor.Idprovedor);
+            mensaje = string.Empty;
 
             if (ProveedorComprobar != null)
             {
                 if (provedor.Nombre != null && provedor.Tipo != null)
-                    return await objProveedor.EditarProveedor(provedor);
+                    return objProveedor.EditarProveedor(provedor, out mensaje);
             }
 
             return false;
         }
 
-        public async Task<bool> EliminarProveedor(int Id)
+        public bool EliminarProveedor(int Id, out string mensaje)
         {
-            var ProveedorComprobar = await objProveedor.GetProveedor(Id);
+            var ProveedorComprobar = objProveedor.GetProveedor(Id);
+            mensaje = string.Empty;
 
             if (ProveedorComprobar != null)
             {
-                return await objProveedor.EliminarProveedor(Id);
+                return objProveedor.EliminarProveedor(Id, out mensaje);
+            }
+            else
+            {
+                mensaje = "Este proveedor no existe";
             }
 
             return false;

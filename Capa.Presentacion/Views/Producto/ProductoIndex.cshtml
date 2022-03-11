@@ -1,7 +1,9 @@
 ﻿
+
+
 <div class="card">
     <div class="card-header">
-        <h6 class="card-title">Empleados</h6>
+        <h6 class="card-title">Productos</h6>
     </div>
     <div class="card-body">
         <!-- Button trigger modal -->
@@ -13,8 +15,9 @@
             <thead>
                 <tr>
                     <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Sexo</th>
+                    <th>Precio</th>
+                    <th>Provedor</th>
+                    <th>Cantidad</th>
                     <th></th>
                 </tr>
             </thead>
@@ -41,32 +44,26 @@
                     <div class="col-sm-6">
                         <label for="txtNombre" class="form-label">Nombre</label>
                         <input type="text" class="form-control" id="txtNombre" autocomplete="off">
-                        <span asp-validation-for="Nombre"></span>
                     </div>
 
                     <div class="col-sm-6">
-                        <label for="txtApellido" class="form-label">Apellido</label>
-                        <input type="text" class="form-control" id="txtApellido" autocomplete="off">
-                        <span asp-validation-for="Apellido"></span>
+                        <label for="txtPrecio" class="form-label">Precio</label>
+                        <input type="text" class="form-control" id="txtPrecio" autocomplete="off">
                     </div>
+                    
                     <div class="col-sm-6">
-                        <label for="cboSexo" class="form-label">Genero</label>
-                        <select id="cboSexo" class="form-select">
-                            <option value="0" disabled>Seleccione</option>
-                            <option value="m">Masculino</option>
-                            <option value="f">Femenino</option>
+                        <label for="txtCantidad" class="form-label">Cantidad</label>
+                        <input type="text" class="form-control" id="txtCantidad" autocomplete="off">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="cboProveedor" class="form-label">Proveedor</label>
+                        <select id="cboProveedor" class="form-select">
+
                         </select>
-                        <span asp-validation-for="Sexo"></span>
                     </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col-12">
-                        <div id="mensajeError" class="alert alert-danger" role="alert">
-                            
-                        </div>
-                    </div>
-                </div>
-                
+                </div>               
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -93,8 +90,8 @@
             "columns":
                 [
                     { "data": "Nombre"},
-                    { "data": "Apellido"},
-                    { "data": "Sexo" },
+                    { "data": "Precio"},
+                    { "data": "Cantidad" },
                     {
                         "defaultContent": "<button type='button' class='btn btn-primary btn-sm btn-editar'><i class='fa fa-pen'></i></button>" +
                             "<button type='button' class='btn btn-danger btn-sm ms-2 btn-eliminar'><i class='fa fa-trash'></i></button>",
@@ -222,3 +219,6 @@
         }
     </script>
 }
+
+
+

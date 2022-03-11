@@ -1,7 +1,8 @@
 ﻿
+
 <div class="card">
     <div class="card-header">
-        <h6 class="card-title">Empleados</h6>
+        <h6 class="card-title">Proveedores</h6>
     </div>
     <div class="card-body">
         <!-- Button trigger modal -->
@@ -13,8 +14,7 @@
             <thead>
                 <tr>
                     <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Sexo</th>
+                    <th>Tipo</th>
                     <th></th>
                 </tr>
             </thead>
@@ -38,35 +38,24 @@
                 <input id="txtId" type="hidden" value="0" />
 
                 <div class="row g-2">
-                    <div class="col-sm-6">
+                    <div class="col-sm-8">
                         <label for="txtNombre" class="form-label">Nombre</label>
                         <input type="text" class="form-control" id="txtNombre" autocomplete="off">
-                        <span asp-validation-for="Nombre"></span>
                     </div>
 
-                    <div class="col-sm-6">
-                        <label for="txtApellido" class="form-label">Apellido</label>
-                        <input type="text" class="form-control" id="txtApellido" autocomplete="off">
-                        <span asp-validation-for="Apellido"></span>
-                    </div>
-                    <div class="col-sm-6">
-                        <label for="cboSexo" class="form-label">Genero</label>
-                        <select id="cboSexo" class="form-select">
-                            <option value="0" disabled>Seleccione</option>
-                            <option value="m">Masculino</option>
-                            <option value="f">Femenino</option>
-                        </select>
-                        <span asp-validation-for="Sexo"></span>
+                    <div class="col-sm-8">
+                        <label for="txtTipo" class="form-label">Tipo</label>
+                        <input type="text" class="form-control" id="txtTipo" autocomplete="off">
                     </div>
                 </div>
                 <div class="row mt-2">
                     <div class="col-12">
                         <div id="mensajeError" class="alert alert-danger" role="alert">
-                            
+
                         </div>
                     </div>
                 </div>
-                
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -85,7 +74,7 @@
             responsive: true,
             ordering: false,
             "ajax": {
-                 url: "@Url.Action("ObtenerEmplados", "Empleado")",
+                 url: "@Url.Action("ObtenerProveedores", "Proveedor")",
                  type: "GET",
                 dataType: "json",
                 contentType: "application/json"
@@ -93,8 +82,7 @@
             "columns":
                 [
                     { "data": "Nombre"},
-                    { "data": "Apellido"},
-                    { "data": "Sexo" },
+                    { "data": "Tipo"},
                     {
                         "defaultContent": "<button type='button' class='btn btn-primary btn-sm btn-editar'><i class='fa fa-pen'></i></button>" +
                             "<button type='button' class='btn btn-danger btn-sm ms-2 btn-eliminar'><i class='fa fa-trash'></i></button>",
@@ -110,18 +98,17 @@
         function abrirModal(json) {
            $("#txtId").val(0);
             $("#txtNombre").val("");
-            $("#txtApellido").val("");
-            $("#cboSexo").val("");
+            $("#txtTipo").val("");
 
             if (json != null) {
-                $("#txtId").val(json.Idempleado);
+                $("#txtId").val(json.Idprovedor);
                 $("#txtNombre").val(json.Nombre);
-                $("#txtApellido").val(json.Apellido);
-                $("#cboSexo").val(json.Sexo);
+                $("#txtTipo").val(json.Tipo);
             }
             $("#formModal").modal("show")
             $("#mensajeError").hide()
         }
+
         $("#tabla tbody").on("click", ".btn-editar", function () {
             filaSeleccionada = $(this).closest("tr");
             var datos = dataTabla.row(filaSeleccionada).data();
@@ -131,16 +118,16 @@
         $("#tabla tbody").on("click", ".btn-eliminar", function () {
             filaSeleccionada = $(this).closest("tr");
             var datos = dataTabla.row(filaSeleccionada).data();
-            let urlEliminar = '@Url.Content("~/Empleado/EliminarEmpleado?Id=")' + datos.Idempleado;
+            let urlEliminar = '@Url.Content("~/Proveedor/EliminarProveedor?Id=")' + datos.Idprovedor;
             var confirmar = confirm("Esta seguro que desea eliminar este registro")
 
             if (confirmar) {
-                //document.location.href = '@Url.Content("~/Empleado/EliminarEmpleado?Id=")' + datos.Idempleado;
+                //document.location.href = '@Url.Content("~/Proveedor/EliminarProveedor?Id=")' + datos.Idprovedor;
 
                 jQuery.ajax({
                     url: urlEliminar,
                     data: {
-                        Id: datos.Idempleado
+                        Id: datos.Idprovedor
                     },
                     type: "GET",
                     dataType: "json",
@@ -149,6 +136,8 @@
                         if (data.resultado) {
                             alert("Eliminado con exito");
                             dataTabla.row(filaSeleccionada).remove().draw(false)
+                        } else {
+                            alert("Error: " + data.mensaje);
                         }
                     },
                     error: function (error) {
@@ -161,18 +150,17 @@
 
         function Guardar() {
 
-            var empleado = {
-                    Idempleado: $("#txtId").val(),
-                    Nombre: $("#txtNombre").val(),
-                    Apellido: $("#txtApellido").val(),
-                    Sexo: $("#cboSexo").val()
+            var provedor = {
+                Idprovedor: $("#txtId").val(),
+                 Nombre: $("#txtNombre").val(),
+                Tipo: $("#txtTipo").val()
             };
 
 
             jQuery.ajax({
-                url: "@Url.Action("GuadarEmpleado", "Empleado")",
+                url: "@Url.Action("GuadarProveedor", "Proveedor")",
                 type: "POST",
-                data: JSON.stringify( empleado) ,
+                data: JSON.stringify(provedor) ,
                 dataType: "json",
                 contentType: "application/json; charset= utf-8 ",
                 success: function (data) {
@@ -180,26 +168,27 @@
                     let resultado = data.resultado;
 
                     console.log(data.resultado)
+
                   $(".modal-body").LoadingOverlay("hide");
                     //empleado nuevo
-                    if (empleado.Idempleado == 0) {
+                    if (provedor.Idprovedor == 0) {
                         if (resultado != 0) {
-                            empleado.Idempleado = resultado;
-                            dataTabla.row.add(empleado).draw(false);
+                            provedor.Idprovedor = resultado;
+                            dataTabla.row.add(provedor).draw(false);
                             $("#formModal").modal("hide");
                         } else {
-                            $("#mensajeError").text();
+                            $("#mensajeError").text("Error: " + data.mensaje);
                             $("#mensajeError").show();
                         }
                     }
                     //empleado editar
                     else {
                         if (resultado) {
-                            dataTabla.row(filaSeleccionada).data(empleado).draw(false);
+                            dataTabla.row(filaSeleccionada).data(provedor).draw(false);
                             filaSeleccionada = null;
                             $("#formModal").modal("hide");
                         } else {
-                            $("#mensajeError").text(data.mensaje);
+                            $("#mensajeError").text("Error: " + data.mensaje);
                             $("#mensajeError").show();
                         }
                     }
@@ -222,3 +211,4 @@
         }
     </script>
 }
+

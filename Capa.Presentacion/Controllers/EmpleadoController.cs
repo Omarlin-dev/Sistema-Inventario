@@ -34,10 +34,11 @@ namespace Capa.Presentacion.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> GuadarEmpleado([FromBody] Empleado empleado)
+        public async Task<JsonResult> GuadarEmpleado([FromBody] EmpleadoViewModel empleadoModel)
         {
             object resultado=false;
 
+            var empleado = mapper.Map<Empleado>(empleadoModel);
 
             if (!ModelState.IsValid)
             {

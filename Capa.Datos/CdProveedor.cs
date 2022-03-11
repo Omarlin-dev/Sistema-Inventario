@@ -35,7 +35,7 @@ namespace Capa.Datos
             {
                 using (InventarioContext contexto = new InventarioContext())
                 {
-                    if(!(contexto.Provedors.Where(d => d.Tipo == provedor.Tipo).Any() || contexto.Provedors.Where(d => d.Nombre == provedor.Nombre).Any()))
+                    if(!(contexto.Provedors.Where(d => d.Tipo == provedor.Tipo).Any() && contexto.Provedors.Where(d => d.Nombre == provedor.Nombre).Any()))
                     {
                         contexto.Provedors.Add(provedor);
                         contexto.SaveChanges();
@@ -67,18 +67,17 @@ namespace Capa.Datos
             {
                 using (InventarioContext contexto = new InventarioContext())
                 {
-                    if (!(contexto.Provedors.Where(d => d.Tipo == provedor.Tipo).Any() || contexto.Provedors.Where(d => d.Nombre == provedor.Nombre).Any()))
+                    if (!(contexto.Provedors.Where(d => d.Tipo == provedor.Tipo).Any() && contexto.Provedors.Where(d => d.Nombre == provedor.Nombre).Any()))
                     {
                         contexto.Entry(provedor).State = EntityState.Modified;
                         contexto.SaveChanges();
+                        operacionExitosa = true;
                     }
                     else
                     {
                         mensaje = "Este proveedor ya existe";
                     }
                 }
-
-                operacionExitosa = true;
             }
             catch (Exception ex)
             {
@@ -104,7 +103,7 @@ namespace Capa.Datos
                         var provedor = contexto.Provedors.Find(Id);
 
                         contexto.Remove(provedor);
-                        contexto.SaveChangesAsync();
+                        contexto.SaveChanges();
 
                         operacionExitosa = true;
                     }
