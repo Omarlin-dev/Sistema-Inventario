@@ -16,8 +16,8 @@
                 <tr>
                     <th>Nombre</th>
                     <th>Precio</th>
-                    <th>Provedor</th>
                     <th>Cantidad</th>
+                    <th>Total</th>
                     <th></th>
                 </tr>
             </thead>
@@ -48,12 +48,12 @@
 
                     <div class="col-sm-6">
                         <label for="txtPrecio" class="form-label">Precio</label>
-                        <input type="text" class="form-control" id="txtPrecio" autocomplete="off">
+                        <input type="number" step="0.01" class="form-control" id="txtPrecio" autocomplete="off">
                     </div>
                     
                     <div class="col-sm-6">
                         <label for="txtCantidad" class="form-label">Cantidad</label>
-                        <input type="text" class="form-control" id="txtCantidad" autocomplete="off">
+                        <input type="number" class="form-control" id="txtCantidad" autocomplete="off">
                     </div>
 
                     <div class="col-sm-6">
@@ -82,7 +82,7 @@
             responsive: true,
             ordering: false,
             "ajax": {
-                 url: "@Url.Action("ObtenerEmplados", "Empleado")",
+                 url: "@Url.Action("ObtenerProducto", "Producto")",
                  type: "GET",
                 dataType: "json",
                 contentType: "application/json"
@@ -90,8 +90,9 @@
             "columns":
                 [
                     { "data": "Nombre"},
-                    { "data": "Precio"},
+                    { "data": "Precio" },
                     { "data": "Cantidad" },
+                    { "data": "Total" },
                     {
                         "defaultContent": "<button type='button' class='btn btn-primary btn-sm btn-editar'><i class='fa fa-pen'></i></button>" +
                             "<button type='button' class='btn btn-danger btn-sm ms-2 btn-eliminar'><i class='fa fa-trash'></i></button>",
@@ -104,21 +105,43 @@
                 "url": "https://cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"
             }
         });
+
+
+        jQuery.ajax({
+            url: "@Url.Action("ObtenerProveedores", "Proveedor")",
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            success: function (data) {
+                $("<option>").attr({ "value": "0", "disabled": "true" }).text("Seleccione").appendTo("#cboProveedor");
+                $.each(data.data, function (index, valor) {
+                    $("<option>").attr({ "value": valor.Idprovedor }).text(valor.Nombre).appendTo("#cboProveedor");
+                })
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+
+
         function abrirModal(json) {
            $("#txtId").val(0);
             $("#txtNombre").val("");
-            $("#txtApellido").val("");
-            $("#cboSexo").val("");
+            $("#txtPrecio").val("");
+            $("#txtCantidad").val("");
+            $("#cboProveedor").val("");
 
             if (json != null) {
-                $("#txtId").val(json.Idempleado);
+                $("#txtId").val(json.Idproducto);
                 $("#txtNombre").val(json.Nombre);
-                $("#txtApellido").val(json.Apellido);
-                $("#cboSexo").val(json.Sexo);
+                $("#txtPrecio").val(json.Precio);
+                $("#txtCantidad").val(json.Cantidad);
+                $("#cboProveedor").val(json.Provedor);
             }
-            $("#formModal").modal("show")
-            $("#mensajeError").hide()
+
+            $("#formModal").modal("show");
         }
+
         $("#tabla tbody").on("click", ".btn-editar", function () {
             filaSeleccionada = $(this).closest("tr");
             var datos = dataTabla.row(filaSeleccionada).data();
@@ -128,16 +151,16 @@
         $("#tabla tbody").on("click", ".btn-eliminar", function () {
             filaSeleccionada = $(this).closest("tr");
             var datos = dataTabla.row(filaSeleccionada).data();
-            let urlEliminar = '@Url.Content("~/Empleado/EliminarEmpleado?Id=")' + datos.Idempleado;
+            let urlEliminar = '@Url.Content("~/Producto/EliminarProducto?Id=")' + datos.Idempleado;
             var confirmar = confirm("Esta seguro que desea eliminar este registro")
 
             if (confirmar) {
-                //document.location.href = '@Url.Content("~/Empleado/EliminarEmpleado?Id=")' + datos.Idempleado;
+                //document.location.href = '@Url.Content("~/Producto/EliminarProducto?Id=")' + datos.Idempleado;
 
                 jQuery.ajax({
                     url: urlEliminar,
                     data: {
-                        Id: datos.Idempleado
+                        Id: datos.Idproducto
                     },
                     type: "GET",
                     dataType: "json",
@@ -156,33 +179,36 @@
             }
         });
 
-        function Guardar() {
+          function Guardar() {
 
-            var empleado = {
-                    Idempleado: $("#txtId").val(),
-                    Nombre: $("#txtNombre").val(),
-                    Apellido: $("#txtApellido").val(),
-                    Sexo: $("#cboSexo").val()
-            };
+              var producto = {
+                  Idproducto: $("#txtId").val(),
+                  Nombre: $("#txtNombre").val(),
+                  Precio: $("#txtPrecio").val(),
+                  Provedor: $("#cboProveedor option:selected").val(),
+                  Cantidad: $("#txtCantidad").val(),
+                  Total: $("#txtCantidad").val() * $("#txtPrecio").val()
+              };
 
+              console.log(producto.Provedor)
 
             jQuery.ajax({
-                url: "@Url.Action("GuadarEmpleado", "Empleado")",
+                url: "@Url.Action("GuadarProducto", "Producto")",
                 type: "POST",
-                data: JSON.stringify( empleado) ,
+                data: JSON.stringify(producto),
                 dataType: "json",
                 contentType: "application/json; charset= utf-8 ",
                 success: function (data) {
 
                     let resultado = data.resultado;
 
-                    console.log(data.resultado)
+                    console.log(resultado)
                   $(".modal-body").LoadingOverlay("hide");
                     //empleado nuevo
-                    if (empleado.Idempleado == 0) {
+                    if (producto.Idproducto == 0) {
                         if (resultado != 0) {
-                            empleado.Idempleado = resultado;
-                            dataTabla.row.add(empleado).draw(false);
+                            producto.Idproducto = resultado;
+                            dataTabla.row.add(producto).draw(false);
                             $("#formModal").modal("hide");
                         } else {
                             $("#mensajeError").text();
@@ -192,7 +218,7 @@
                     //empleado editar
                     else {
                         if (resultado) {
-                            dataTabla.row(filaSeleccionada).data(empleado).draw(false);
+                            dataTabla.row(filaSeleccionada).data(producto).draw(false);
                             filaSeleccionada = null;
                             $("#formModal").modal("hide");
                         } else {

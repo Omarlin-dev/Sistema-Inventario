@@ -35,6 +35,7 @@ namespace Capa.Presentacion.Controllers
                                             Idproducto = d.Idproducto,
                                             Nombre = d.Nombre,
                                             Precio = d.Precio,
+                                            Total = d.Cantidad * d.Precio,
                                             Provedor = d.Provedor,
                                             Cantidad = d.Cantidad,
                                             ProvedorNavigation = new ProveedorViewModel()
@@ -49,11 +50,11 @@ namespace Capa.Presentacion.Controllers
         }
 
         [HttpPost]
-        public JsonResult GuadarProducto([FromBody] ProductoViewModel productoModel)
+        public async Task<JsonResult> GuadarProducto([FromBody] ProductoViewModel productoModel)
         {
             object resultado = false;
 
-            var producto = mapper.Map<Producto>(productoModel); 
+            var producto = mapper.Map<Producto>(productoModel);
 
             if (!ModelState.IsValid)
             {
@@ -64,11 +65,11 @@ namespace Capa.Presentacion.Controllers
             {
                 if (producto.Idproducto == 0)
                 {
-                    resultado = objProducto.AgregarProducto(producto);
+                    resultado = await objProducto.AgregarProducto(producto);
                 }
                 else
                 {
-                    resultado = objProducto.EditarProducto(producto);
+                    resultado = await objProducto.EditarProducto(producto);
                 }
             }
 

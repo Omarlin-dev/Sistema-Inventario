@@ -1,4 +1,6 @@
-﻿namespace Capa.Entidades.ViewModel
+﻿using System;
+
+namespace Capa.Entidades.ViewModel
 {
     public class ProductoViewModel
     {
@@ -7,6 +9,7 @@
         public decimal? Precio { get; set; }
         public int Provedor { get; set; }
         public int? Cantidad { get; set; }
+        public decimal? Total { get; set; }
         public virtual ProveedorViewModel ProvedorNavigation { get; set; }
     }
 }
